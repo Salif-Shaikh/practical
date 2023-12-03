@@ -1,0 +1,136 @@
+Q1. Write a Java Program to implement an Adapter design pattern in mobile charger.
+Define two classes – Volt (to measure volts) and Socket (producing constant volts of
+120V). Build an adapter that can produce 3 volts, 12 volts and default 120 volts.
+Implements Adapter pattern using Class Adapter
+
+// Target interface
+interface Volt {
+    int getVolts();
+}
+
+// Adaptee class (existing class)
+class Socket {
+    public int getVolts() {
+        return 120;
+    }
+}
+
+// Adapter class using Class Adapter pattern
+class SocketAdapter extends Socket implements Volt {
+    // Convert 120V to 3V
+    @Override
+    public int getVolts() {
+        return super.getVolts() / 40;
+    }
+
+    // Additional method to provide 12V
+    public int get12Volts() {
+        return super.getVolts() / 10;
+    }
+}
+
+// Client code
+public class AdapterPatternExample {
+    public static void main(String[] args) {
+        SocketAdapter socketAdapter = new SocketAdapter();
+
+        System.out.println("Default Socket Voltage: " + socketAdapter.getVolts() + "V");
+        System.out.println("12V Socket Voltage: " + socketAdapter.get12Volts() + "V");
+        System.out.println("3V Socket Voltage: " + socketAdapter.getVolts() + "V");
+    }
+}
+
+
+
+
+
+Q2. Write a Python program to prepare Scatter Plot for Iris Dataset
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn import datasets
+
+# Load Iris dataset
+iris = datasets.load_iris()
+iris_data = iris.data
+iris_labels = iris.target
+iris_feature_names = iris.feature_names
+
+# Create a DataFrame using Seaborn
+iris_df = sns.load_dataset("iris")
+
+# Create a scatter plot
+sns.set(style="whitegrid")
+sns.pairplot(iris_df, hue="species", height=2.5)
+plt.suptitle("Scatter Plot for Iris Dataset", y=1.02)
+plt.show()
+
+
+
+
+Q3. Using node js create a User Login System.
+
+const express = require('express');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+
+const app = express();
+const port = 3000;
+
+// Middleware setup
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+  session({
+    secret: 'your-secret-key', // Change this to a secret key for production
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+// Dummy user for demonstration purposes (replace with a database in a real application)
+const dummyUser = {
+  username: 'user1',
+  password: 'password123',
+};
+
+// Middleware to check if the user is authenticated
+function isAuthenticated(req, res, next) {
+  if (req.session.user) {
+    return next();
+  }
+  res.redirect('/login');
+}
+
+// Routes
+app.get('/', isAuthenticated, (req, res) => {
+  res.send(`Welcome, ${req.session.user.username}! <a href="/logout">Logout</a>`);
+});
+
+app.get('/login', (req, res) => {
+  res.send('Login Page: <form method="post" action="/login"><input type="text" name="username" placeholder="Username"><br><input type="password" name="password" placeholder="Password"><br><input type="submit" value="Login"></form>');
+});
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  // Dummy authentication (replace with database authentication)
+  if (username === dummyUser.username && password === dummyUser.password) {
+    req.session.user = dummyUser;
+    res.redirect('/');
+  } else {
+    res.send('Invalid credentials. <a href="/login">Try again</a>');
+  }
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.redirect('/login');
+  });
+});
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+});
+
+Visit http://localhost:3000 in your browser to see the login page.

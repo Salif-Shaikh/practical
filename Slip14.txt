@@ -1,0 +1,219 @@
+Q1. Write a Java Program to implement Command Design Pattern for Command Interface
+with execute() . Use this to create variety of commands for LightOnCommand,
+LightOffCommand, GarageDoorUpCommand, StereoOnWithCDComman.
+
+// Command interface
+interface Command {
+    void execute();
+}
+
+// Receiver class
+class Light {
+    void turnOn() {
+        System.out.println("Light is ON");
+    }
+
+    void turnOff() {
+        System.out.println("Light is OFF");
+    }
+}
+
+class GarageDoor {
+    void up() {
+        System.out.println("Garage door is UP");
+    }
+}
+
+class Stereo {
+    void onWithCD() {
+        System.out.println("Stereo is ON with CD");
+    }
+}
+
+// Concrete Command classes
+class LightOnCommand implements Command {
+    private Light light;
+
+    public LightOnCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOn();
+    }
+}
+
+class LightOffCommand implements Command {
+    private Light light;
+
+    public LightOffCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOff();
+    }
+}
+
+class GarageDoorUpCommand implements Command {
+    private GarageDoor garageDoor;
+
+    public GarageDoorUpCommand(GarageDoor garageDoor) {
+        this.garageDoor = garageDoor;
+    }
+
+    @Override
+    public void execute() {
+        garageDoor.up();
+    }
+}
+
+class StereoOnWithCDCommand implements Command {
+    private Stereo stereo;
+
+    public StereoOnWithCDCommand(Stereo stereo) {
+        this.stereo = stereo;
+    }
+
+    @Override
+    public void execute() {
+        stereo.onWithCD();
+    }
+}
+
+// Invoker class
+class RemoteControl {
+    private Command command;
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void pressButton() {
+        command.execute();
+    }
+}
+
+// Client code
+public class CommandPatternExample {
+    public static void main(String[] args) {
+        // Create instances of the receiver objects
+        Light light = new Light();
+        GarageDoor garageDoor = new GarageDoor();
+        Stereo stereo = new Stereo();
+
+        // Create command objects
+        LightOnCommand lightOnCommand = new LightOnCommand(light);
+        LightOffCommand lightOffCommand = new LightOffCommand(light);
+        GarageDoorUpCommand garageDoorUpCommand = new GarageDoorUpCommand(garageDoor);
+        StereoOnWithCDCommand stereoOnWithCDCommand = new StereoOnWithCDCommand(stereo);
+
+        // Create invoker
+        RemoteControl remote = new RemoteControl();
+
+        // Set and press the commands
+        remote.setCommand(lightOnCommand);
+        remote.pressButton();
+
+        remote.setCommand(lightOffCommand);
+        remote.pressButton();
+
+        remote.setCommand(garageDoorUpCommand);
+        remote.pressButton();
+
+        remote.setCommand(stereoOnWithCDCommand);
+        remote.pressButton();
+    }
+}
+
+
+
+
+Q2. Write a python program to find all null values in a given dataset and remove them.
+
+import pandas as pd
+
+# Assuming you have a dataset (replace 'your_dataset.csv' with your actual dataset)
+file_path = 'your_dataset.csv'
+
+# Read the dataset into a Pandas DataFrame
+df = pd.read_csv(file_path)
+
+# Display the original dataset
+print("Original Dataset:")
+print(df)
+
+# Find and display null values in the dataset
+null_values = df.isnull().sum()
+print("\nNull Values in the Dataset:")
+print(null_values)
+
+# Remove rows with null values
+df_cleaned = df.dropna()
+
+# Display the cleaned dataset
+print("\nCleaned Dataset:")
+print(df_cleaned)
+
+
+
+Q3. Write node js script to interact with the filesystem, and serve a web page from a file
+
+    Create a file named server.js with the following content:
+
+javascript
+
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
+const server = http.createServer((req, res) => {
+  // Define the path to the HTML file
+  const filePath = path.join(__dirname, 'index.html');
+
+  // Read the HTML file
+  fs.readFile(filePath, 'utf8', (err, content) => {
+    if (err) {
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end('Internal Server Error');
+      return;
+    }
+
+    // Serve the HTML content
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(content);
+  });
+});
+
+const port = 3000;
+
+server.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}/`);
+});
+
+    Create a file named index.html in the same directory with your HTML content, for example:
+
+html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Web Page</title>
+</head>
+<body>
+  <h1>Hello, Node.js!</h1>
+  <p>This is a simple web page served by Node.js.</p>
+</body>
+</html>
+
+    Open a terminal, navigate to the directory containing server.js and index.html, and run:
+
+bash
+
+node server.js
+
+This will start a simple HTTP server at http://localhost:3000/. You can open this URL in your browser to see the served web page.

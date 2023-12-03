@@ -1,0 +1,143 @@
+Q1. Write a java program to implement Adapter pattern to design Heart Model to Beat
+Model
+
+// Adaptee: Heart model with its own interface
+class Heart {
+    void beat() {
+        System.out.println("Heart is beating...");
+    }
+}
+
+// Target: Beat model with a different interface
+interface Beat {
+    void makeSound();
+}
+
+// Adapter: Adapter class to make Heart compatible with Beat
+class HeartAdapter implements Beat {
+    private Heart heart;
+
+    public HeartAdapter(Heart heart) {
+        this.heart = heart;
+    }
+
+    @Override
+    public void makeSound() {
+        heart.beat();
+    }
+}
+
+// Client code using the Beat model
+class BeatModelClient {
+    void playBeat(Beat beat) {
+        beat.makeSound();
+    }
+}
+
+public class AdapterPatternExample {
+    public static void main(String[] args) {
+        // Creating instances of Heart and Beat models
+        Heart heart = new Heart();
+        Beat beatAdapter = new HeartAdapter(heart);
+
+        // Client code using the Beat model (unaware of the Heart model)
+        BeatModelClient client = new BeatModelClient();
+        client.playBeat(beatAdapter);
+    }
+}
+
+
+
+Q2. Write a python program to find all null values in a given dataset and remove them.
+
+import pandas as pd
+
+# Assuming you have a dataset (replace 'your_dataset.csv' with your actual dataset)
+file_path = 'your_dataset.csv'
+
+# Read the dataset into a Pandas DataFrame
+df = pd.read_csv(file_path)
+
+# Display the original dataset
+print("Original Dataset:")
+print(df)
+
+# Find and display null values in the dataset
+null_values = df.isnull().sum()
+print("\nNull Values in the Dataset:")
+print(null_values)
+
+# Remove rows with null values
+df_cleaned = df.dropna()
+
+# Display the cleaned dataset
+print("\nCleaned Dataset:")
+print(df_cleaned)
+
+
+
+
+
+Q3. Create a node.js file that Select all records from the "customers" table, and delete the
+specified record.
+
+const mysql = require('mysql');
+
+// Create a connection to the MySQL server
+const connection = mysql.createConnection({
+  host: 'your_database_host', // replace with your MySQL database host
+  user: 'your_username',       // replace with your MySQL username
+  password: 'your_password',   // replace with your MySQL password
+  database: 'your_database'    // replace with your MySQL database name
+});
+
+// Connect to MySQL server
+connection.connect((err) => {
+  if (err) {
+    console.error('Error connecting to MySQL:', err.message);
+    return;
+  }
+
+  console.log('Connected to MySQL server');
+
+  // Select all records from the "customers" table
+  const selectQuery = 'SELECT * FROM customers';
+
+  connection.query(selectQuery, (err, results) => {
+    if (err) {
+      console.error('Error selecting records:', err.message);
+      connection.end();
+      return;
+    }
+
+    // Display the selected records on the console
+    console.log('Selected Records:', results);
+
+    // Specify the record to delete (replace 'customerIdToDelete' with the actual value)
+    const customerIdToDelete = 1;
+
+    // Delete the specified record
+    const deleteQuery = 'DELETE FROM customers WHERE id = ?';
+
+    connection.query(deleteQuery, [customerIdToDelete], (err, deleteResult) => {
+      if (err) {
+        console.error('Error deleting record:', err.message);
+        connection.end();
+        return;
+      }
+
+      // Display the result of the delete operation
+      console.log('Delete Result:', deleteResult);
+
+      // Close the MySQL connection
+      connection.end((err) => {
+        if (err) {
+          console.error('Error closing connection:', err.message);
+          return;
+        }
+
+        console.log('Connection closed');
+      });
+    });
+  });
+});

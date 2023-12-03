@@ -1,0 +1,183 @@
+Q1. Write a Java Program to implement Facade Design Pattern for HomeTheater
+
+// Subsystem components
+class Amplifier {
+    void on() {
+        System.out.println("Amplifier is ON");
+    }
+
+    void off() {
+        System.out.println("Amplifier is OFF");
+    }
+}
+
+class DVDPlayer {
+    void on() {
+        System.out.println("DVD Player is ON");
+    }
+
+    void off() {
+        System.out.println("DVD Player is OFF");
+    }
+
+    void play(String movie) {
+        System.out.println("Playing movie: " + movie);
+    }
+
+    void stop() {
+        System.out.println("Stopping the DVD Player");
+    }
+}
+
+class Projector {
+    void on() {
+        System.out.println("Projector is ON");
+    }
+
+    void off() {
+        System.out.println("Projector is OFF");
+    }
+
+    void setInput(DVDPlayer dvdPlayer) {
+        System.out.println("Setting projector input to DVD Player");
+    }
+}
+
+class Lights {
+    void dim(int level) {
+        System.out.println("Dimming lights to level " + level);
+    }
+
+    void on() {
+        System.out.println("Lights are ON");
+    }
+
+    void off() {
+        System.out.println("Lights are OFF");
+    }
+}
+
+// Facade class
+class HomeTheaterFacade {
+    private Amplifier amplifier;
+    private DVDPlayer dvdPlayer;
+    private Projector projector;
+    private Lights lights;
+
+    public HomeTheaterFacade(Amplifier amplifier, DVDPlayer dvdPlayer, Projector projector, Lights lights) {
+        this.amplifier = amplifier;
+        this.dvdPlayer = dvdPlayer;
+        this.projector = projector;
+        this.lights = lights;
+    }
+
+    // Method to start watching a movie
+    public void watchMovie(String movie) {
+        System.out.println("Get ready to watch a movie...");
+
+        // Turn on the necessary components
+        amplifier.on();
+        dvdPlayer.on();
+        projector.on();
+        lights.dim(5);
+    }
+
+    // Method to stop watching a movie
+    public void endMovie() {
+        System.out.println("Shutting down the movie...");
+
+        // Turn off the components
+        amplifier.off();
+        dvdPlayer.stop();
+        dvdPlayer.off();
+        projector.off();
+        lights.on();
+    }
+}
+
+// Client code
+public class FacadePatternExample {
+    public static void main(String[] args) {
+        // Instantiate subsystem components
+        Amplifier amplifier = new Amplifier();
+        DVDPlayer dvdPlayer = new DVDPlayer();
+        Projector projector = new Projector();
+        Lights lights = new Lights();
+
+        // Instantiate the facade with the subsystem components
+        HomeTheaterFacade homeTheaterFacade = new HomeTheaterFacade(amplifier, dvdPlayer, projector, lights);
+
+        // Watch a movie using the facade
+        homeTheaterFacade.watchMovie("The Matrix");
+
+        // Stop watching the movie using the facade
+        homeTheaterFacade.endMovie();
+    }
+}
+
+
+Q2. Write a python program to make Categorical values in numeric format for a given
+dataset
+
+
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+
+# Assuming you have a dataset (replace 'your_dataset.csv' with your actual dataset)
+file_path = 'your_dataset.csv'
+
+# Read the dataset into a Pandas DataFrame
+df = pd.read_csv(file_path)
+
+# Display the original dataset
+print("Original Dataset:")
+print(df)
+
+# Initialize LabelEncoder
+label_encoder = LabelEncoder()
+
+# Iterate over each column in the DataFrame
+for column in df.columns:
+    # Check if the column has object dtype (categorical)
+    if df[column].dtype == 'object':
+        # Use LabelEncoder to convert categorical values to numeric format
+        df[column] = label_encoder.fit_transform(df[column])
+
+# Display the dataset with numeric values for categorical columns
+print("\nDataset with Numeric Values for Categorical Columns:")
+print(df)
+
+Q3. Write node js script to build Your Own Node.js Module. Use require (‘http’) module is a
+built-in Node module that invokes the functionality of the HTTP libraryto create a
+local server. Also use the export statement to make functions in your module available
+externally. Create a new text file to contain the functions in your module called,
+“modules.js” and add this function to return today’s date and time.
+
+
+    Create a file named modules.js:
+
+javascript
+
+// modules.js
+
+// Function to get today's date and time
+exports.getCurrentDateTime = function() {
+  const currentDate = new Date();
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short' };
+  return currentDate.toLocaleDateString('en-US', options);
+};
+
+    Create a file named app.js to use the module:
+
+javascript
+
+// app.js
+
+// Require your own module
+const myModule = require('./modules');
+
+// Use the function from the module
+const currentDateTime = myModule.getCurrentDateTime();
+
+// Print the result
+console.log(`Current Date and Time: ${currentDateTime}`);
