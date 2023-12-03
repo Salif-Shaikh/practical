@@ -1,0 +1,173 @@
+Q1. JAVA
+
+public class Singleton {
+
+    private static volatile Singleton instance;
+
+    private Singleton() {
+        // Private constructor to prevent instantiation from outside the class.
+    }
+
+    public static Singleton getInstance() {
+        if (instance == null) {
+            synchronized (Singleton.class) {
+                // Double-check to ensure thread-safety.
+                if (instance == null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public void showMessage() {
+        System.out.println("Hello, I am a Singleton!");
+    }
+
+    public static void main(String[] args) {
+        // Example usage
+        Singleton singleton1 = Singleton.getInstance();
+        singleton1.showMessage();
+
+        Singleton singleton2 = Singleton.getInstance();
+        singleton2.showMessage();
+
+        // Check if both instances are the same
+        System.out.println("Are both instances the same? " + (singleton1 == singleton2));
+    }
+}
+
+Q2. PYTHON
+
+import pandas as pd
+
+# Sample dataset with null values
+data = {
+    'Name': ['Alice', 'Bob', 'Charlie', None, 'David'],
+    'Age': [25, 30, None, 22, 35],
+    'City': ['New York', 'London', 'Paris', None, 'Tokyo']
+}
+
+# Create a DataFrame from the sample data
+df = pd.DataFrame(data)
+
+# Display the original dataset
+print("Original Dataset:")
+print(df)
+
+# Find null values in the dataset
+null_values = df.isnull()
+
+# Display the locations of null values
+print("\nNull Values in the Dataset:")
+print(null_values)
+
+# Remove rows with null values
+df_cleaned = df.dropna()
+
+# Display the dataset after removing null values
+print("\nDataset after Removing Null Values:")
+print(df_cleaned)
+
+Q3. NODEJS
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Registration Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #error-message {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Employee Registration Form</h2>
+
+<form id="registrationForm">
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob" name="dob" required>
+
+    <label for="joiningDate">Joining Date:</label>
+    <input type="date" id="joiningDate" name="joiningDate" required>
+
+    <label for="salary">Salary:</label>
+    <input type="number" id="salary" name="salary" required>
+
+    <button type="button" onclick="validateForm()">Submit</button>
+</form>
+
+<div id="error-message"></div>
+
+<script>
+    function validateForm() {
+        var dob = document.getElementById('dob').value;
+        var joiningDate = document.getElementById('joiningDate').value;
+        var salary = document.getElementById('salary').value;
+
+        var errorMessage = "";
+
+        // Validate Date of Birth
+        var dobDate = new Date(dob);
+        if (isNaN(dobDate.getTime())) {
+            errorMessage += "Invalid Date of Birth.\n";
+        }
+
+        // Validate Joining Date
+        var joiningDateDate = new Date(joiningDate);
+        if (isNaN(joiningDateDate.getTime())) {
+            errorMessage += "Invalid Joining Date.\n";
+        }
+
+        // Validate Salary
+        if (isNaN(salary) || salary <= 0) {
+            errorMessage += "Salary should be a positive number.\n";
+        }
+
+        // Display error message or submit the form
+        var errorMessageDiv = document.getElementById('error-message');
+        if (errorMessage !== "") {
+            errorMessageDiv.textContent = errorMessage;
+        } else {
+            errorMessageDiv.textContent = "";
+            // Submit the form (you can replace this with your actual form submission logic)
+            document.getElementById('registrationForm').submit();
+        }
+    }
+</script>
+
+</body>
+</html>
