@@ -1,0 +1,214 @@
+Q1. Write a Java Program to implement Strategy Pattern for Duck Behavior. Create
+instance variable that holds current state of Duck from there, we just need to handle all
+Flying Behaviors and Quack Behavior
+
+// Define the QuackBehavior interface
+interface QuackBehavior {
+    void quack();
+}
+
+// Concrete quack behaviors
+class Quack implements QuackBehavior {
+    @Override
+    public void quack() {
+        System.out.println("Quack");
+    }
+}
+
+class MuteQuack implements QuackBehavior {
+    @Override
+    public void quack() {
+        System.out.println("<< Silence >>");
+    }
+}
+
+class Squeak implements QuackBehavior {
+    @Override
+    public void quack() {
+        System.out.println("Squeak");
+    }
+}
+
+// Define the FlyBehavior interface
+interface FlyBehavior {
+    void fly();
+}
+
+// Concrete fly behaviors
+class FlyWithWings implements FlyBehavior {
+    @Override
+    public void fly() {
+        System.out.println("Fly with wings");
+    }
+}
+
+class FlyNoWay implements FlyBehavior {
+    @Override
+    public void fly() {
+        System.out.println("Can't fly");
+    }
+}
+
+// Duck class that uses the Strategy Pattern
+abstract class Duck {
+    // Instance variables to hold current behaviors
+    QuackBehavior quackBehavior;
+    FlyBehavior flyBehavior;
+
+    // Constructor
+    public Duck(QuackBehavior quackBehavior, FlyBehavior flyBehavior) {
+        this.quackBehavior = quackBehavior;
+        this.flyBehavior = flyBehavior;
+    }
+
+    // Display method to be implemented by subclasses
+    abstract void display();
+
+    // Perform quack behavior
+    void performQuack() {
+        quackBehavior.quack();
+    }
+
+    // Perform fly behavior
+    void performFly() {
+        flyBehavior.fly();
+    }
+
+    // Set new quack behavior
+    void setQuackBehavior(QuackBehavior quackBehavior) {
+        this.quackBehavior = quackBehavior;
+    }
+
+    // Set new fly behavior
+    void setFlyBehavior(FlyBehavior flyBehavior) {
+        this.flyBehavior = flyBehavior;
+    }
+
+    // Other duck methods...
+}
+
+// Concrete Duck subclasses
+class MallardDuck extends Duck {
+    public MallardDuck() {
+        // Mallard ducks quack and fly with wings by default
+        super(new Quack(), new FlyWithWings());
+    }
+
+    @Override
+    void display() {
+        System.out.println("I'm a Mallard Duck");
+    }
+}
+
+class RubberDuck extends Duck {
+    public RubberDuck() {
+        // Rubber ducks squeak and can't fly by default
+        super(new Squeak(), new FlyNoWay());
+    }
+
+    @Override
+    void display() {
+        System.out.println("I'm a Rubber Duck");
+    }
+}
+
+public class DuckSimulator {
+    public static void main(String[] args) {
+        // Create Mallard Duck
+        Duck mallardDuck = new MallardDuck();
+        mallardDuck.display();
+        mallardDuck.performQuack();
+        mallardDuck.performFly();
+
+        // Create Rubber Duck
+        Duck rubberDuck = new RubberDuck();
+        rubberDuck.display();
+        rubberDuck.performQuack();
+        rubberDuck.performFly();
+
+        // Change behavior at runtime
+        rubberDuck.setQuackBehavior(new MuteQuack());
+        rubberDuck.setFlyBehavior(new FlyWithWings());
+        rubberDuck.performQuack();
+        rubberDuck.performFly();
+    }
+}
+
+
+
+Q2. Write a Python program to prepare Scatter Plot for Iris Dataset.
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn import datasets
+
+# Load Iris dataset
+iris = datasets.load_iris()
+iris_data = iris.data
+iris_labels = iris.target
+iris_feature_names = iris.feature_names
+
+# Create a DataFrame using Seaborn
+iris_df = sns.load_dataset("iris")
+
+# Create a scatter plot
+sns.set(style="whitegrid")
+sns.pairplot(iris_df, hue="species", height=2.5)
+plt.suptitle("Scatter Plot for Iris Dataset", y=1.02)
+plt.show()
+
+
+
+Q3. Create a node.js file that Insert Multiple Records in "student" table, and display the
+result object on console.
+
+const mysql = require('mysql');
+
+// Create a connection to the MySQL server
+const connection = mysql.createConnection({
+  host: 'your_database_host', // replace with your MySQL database host
+  user: 'your_username',       // replace with your MySQL username
+  password: 'your_password',   // replace with your MySQL password
+  database: 'your_database'    // replace with your MySQL database name
+});
+
+// Connect to MySQL server
+connection.connect((err) => {
+  if (err) {
+    console.error('Error connecting to MySQL:', err.message);
+    return;
+  }
+
+  console.log('Connected to MySQL server');
+
+  // Insert multiple records into the "student" table
+  const students = [
+    { name: 'John Doe', age: 20, grade: 'A' },
+    { name: 'Jane Doe', age: 22, grade: 'B' },
+    { name: 'Bob Smith', age: 21, grade: 'C' }
+    // Add more student records as needed
+  ];
+
+  const insertQuery = 'INSERT INTO student (name, age, grade) VALUES ?';
+
+  connection.query(insertQuery, [students.map(student => [student.name, student.age, student.grade])], (err, results) => {
+    if (err) {
+      console.error('Error inserting records:', err.message);
+      connection.end();
+      return;
+    }
+
+    // Display the result object on the console
+    console.log('Inserted Records:', results);
+
+    // Close the MySQL connection
+    connection.end((err) => {
+      if (err) {
+        console.error('Error closing connection:', err.message);
+        return;
+      }
+
+      console.log('Connection closed');
+    });
+  });
+});

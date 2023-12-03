@@ -1,0 +1,158 @@
+Q1. Write a Java Program to implement command pattern to test Remote Control
+
+// Command interface
+interface Command {
+    void execute();
+}
+
+// Concrete command for turning on the TV
+class TurnOnTVCommand implements Command {
+    private TV tv;
+
+    public TurnOnTVCommand(TV tv) {
+        this.tv = tv;
+    }
+
+    @Override
+    public void execute() {
+        tv.turnOn();
+    }
+}
+
+// Concrete command for turning off the TV
+class TurnOffTVCommand implements Command {
+    private TV tv;
+
+    public TurnOffTVCommand(TV tv) {
+        this.tv = tv;
+    }
+
+    @Override
+    public void execute() {
+        tv.turnOff();
+    }
+}
+
+// Receiver class (the object that the commands operate on)
+class TV {
+    public void turnOn() {
+        System.out.println("TV is ON");
+    }
+
+    public void turnOff() {
+        System.out.println("TV is OFF");
+    }
+}
+
+// Invoker class (the object that asks the command to execute)
+class RemoteControl {
+    private Command command;
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void pressButton() {
+        command.execute();
+    }
+}
+
+// Client code to test the Remote Control with Command Pattern
+public class RemoteControlTest {
+    public static void main(String[] args) {
+        // Create TV and corresponding commands
+        TV tv = new TV();
+        Command turnOnCommand = new TurnOnTVCommand(tv);
+        Command turnOffCommand = new TurnOffTVCommand(tv);
+
+        // Create Remote Control
+        RemoteControl remoteControl = new RemoteControl();
+
+        // Test turning on the TV
+        remoteControl.setCommand(turnOnCommand);
+        remoteControl.pressButton();
+
+        // Test turning off the TV
+        remoteControl.setCommand(turnOffCommand);
+        remoteControl.pressButton();
+    }
+}
+
+Q2. Write a python program to implement Polynomial Linear Regression for given dataset
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+# Sample dataset
+np.random.seed(42)
+X = 2 * np.random.rand(100, 1)
+y = 0.5 * X**2 + X + 2 + np.random.randn(100, 1)
+
+# Add polynomial features
+poly_features = PolynomialFeatures(degree=2, include_bias=False)
+X_poly = poly_features.fit_transform(X)
+
+# Create a linear regression model
+model = LinearRegression()
+
+# Train the model on the polynomial features
+model.fit(X_poly, y)
+
+# Make predictions on the original X values
+y_pred = model.predict(X_poly)
+
+# Plot the original data points and the polynomial regression curve
+plt.scatter(X, y, label='Original Data')
+plt.plot(X, y_pred, 'r', label='Polynomial Regression')
+plt.xlabel('X')
+plt.ylabel('y')
+plt.title('Polynomial Linear Regression')
+plt.legend()
+plt.show()
+
+# Calculate and print the Mean Squared Error
+mse = mean_squared_error(y, y_pred)
+print(f'Mean Squared Error: {mse}')
+
+Q3. Create a Node.js file that opens the requested file and returns the content to the client.
+If anything goes wrong, throw a 404 error.
+
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
+const server = http.createServer((req, res) => {
+  // Extract the requested file path from the URL
+  const filePath = path.join(__dirname, 'files', req.url);
+
+  // Check if the file exists
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      // File not found (404 error)
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('404 Not Found');
+    } else {
+      // Read the file and return its content
+      fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+          // Error reading the file
+          res.writeHead(500, { 'Content-Type': 'text/plain' });
+          res.end('Internal Server Error');
+        } else {
+          // File found, send the content to the client
+          res.writeHead(200, { 'Content-Type': 'text/plain' });
+          res.end(data);
+        }
+      });
+    }
+  });
+});
+
+const PORT = 3000;
+
+server.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});

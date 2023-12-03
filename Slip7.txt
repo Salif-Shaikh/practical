@@ -1,0 +1,231 @@
+Q1. Write a Java Program to implement undo command to test Ceiling fan.
+
+// Command interface
+interface Command {
+    void execute();
+    void undo();
+}
+
+// Receiver class (Ceiling Fan)
+class CeilingFan {
+    private String speed;
+
+    public CeilingFan() {
+        speed = "OFF";
+    }
+
+    public void turnOn() {
+        speed = "LOW";
+        System.out.println("Ceiling Fan is ON at LOW speed");
+    }
+
+    public void turnOff() {
+        speed = "OFF";
+        System.out.println("Ceiling Fan is OFF");
+    }
+
+    public String getSpeed() {
+        return speed;
+    }
+}
+
+// Concrete command for turning on the fan
+class TurnOnCommand implements Command {
+    private CeilingFan ceilingFan;
+
+    public TurnOnCommand(CeilingFan ceilingFan) {
+        this.ceilingFan = ceilingFan;
+    }
+
+    @Override
+    public void execute() {
+        ceilingFan.turnOn();
+    }
+
+    @Override
+    public void undo() {
+        ceilingFan.turnOff();
+    }
+}
+
+// Concrete command for turning off the fan
+class TurnOffCommand implements Command {
+    private CeilingFan ceilingFan;
+
+    public TurnOffCommand(CeilingFan ceilingFan) {
+        this.ceilingFan = ceilingFan;
+    }
+
+    @Override
+    public void execute() {
+        ceilingFan.turnOff();
+    }
+
+    @Override
+    public void undo() {
+        ceilingFan.turnOn();
+    }
+}
+
+// Invoker class (Remote Control)
+class RemoteControl {
+    private Command command;
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void pressButton() {
+        command.execute();
+    }
+
+    public void pressUndo() {
+        command.undo();
+    }
+}
+
+// Client code to test the Undo Command with Ceiling Fan
+public class CeilingFanTest {
+    public static void main(String[] args) {
+        // Create Ceiling Fan and corresponding commands
+        CeilingFan ceilingFan = new CeilingFan();
+        Command turnOnCommand = new TurnOnCommand(ceilingFan);
+        Command turnOffCommand = new TurnOffCommand(ceilingFan);
+
+        // Create Remote Control
+        RemoteControl remoteControl = new RemoteControl();
+
+        // Test turning on the fan
+        remoteControl.setCommand(turnOnCommand);
+        remoteControl.pressButton();
+
+        // Test turning off the fan
+        remoteControl.setCommand(turnOffCommand);
+        remoteControl.pressButton();
+
+        // Test undo (turn on)
+        remoteControl.pressUndo();
+    }
+}
+
+Q2. Write a python program to implement Naive Bayes.
+
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn import metrics
+
+# Sample data
+corpus = [
+    ('This is a positive sentence', 'positive'),
+    ('Negative words make a negative sentence', 'negative'),
+    ('This is a positive review', 'positive'),
+    ('Negative feedback is not appreciated', 'negative'),
+    ('The product is excellent', 'positive'),
+    ('Poor quality, not recommended', 'negative'),
+]
+
+# Extract features and labels
+X, y = zip(*corpus)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Convert text data to feature vectors using CountVectorizer
+vectorizer = CountVectorizer()
+X_train_vectorized = vectorizer.fit_transform(X_train)
+X_test_vectorized = vectorizer.transform(X_test)
+
+# Create Naive Bayes classifier
+nb_classifier = MultinomialNB()
+
+# Train the classifier
+nb_classifier.fit(X_train_vectorized, y_train)
+
+# Make predictions on the test set
+y_pred = nb_classifier.predict(X_test_vectorized)
+
+# Evaluate the performance
+accuracy = metrics.accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.2f}')
+
+# Example predictions
+new_reviews = ['Excellent product, highly recommended', 'Terrible experience, waste of money']
+new_reviews_vectorized = vectorizer.transform(new_reviews)
+predictions = nb_classifier.predict(new_reviews_vectorized)
+
+print('\nExample Predictions:')
+for review, prediction in zip(new_reviews, predictions):
+    print(f'Review: "{review}" => Prediction: {prediction}')
+
+
+Q3. Create a Node.js file that writes an HTML form, with an upload field.
+
+const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer((req, res) => {
+    if (req.method === 'GET') {
+        // Send the HTML form
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>File Upload Form</title>
+            </head>
+            <body>
+                <h2>File Upload Form</h2>
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <input type="file" name="fileToUpload" required>
+                    <br>
+                    <input type="submit" value="Upload">
+                </form>
+            </body>
+            </html>
+        `);
+    } else if (req.method === 'POST' && req.url === '/upload') {
+        // Handle file upload
+        let data = '';
+        req.on('data', chunk => {
+            data += chunk;
+        });
+
+        req.on('end', () => {
+            const match = /filename="(.*)"/.exec(data);
+            const fileName = match && match[1] ? match[1] : 'uploaded_file.txt';
+
+            req.pipe(fs.createWriteStream(`./uploads/${fileName}`));
+
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(`
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>File Uploaded</title>
+                </head>
+                <body>
+                    <h2>File Uploaded Successfully</h2>
+                    <p>Uploaded file: ${fileName}</p>
+                    <p><a href="/">Back to Form</a></p>
+                </body>
+                </html>
+            `);
+        });
+    } else {
+        // Handle other requests
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('404 Not Found');
+    }
+});
+
+const PORT = 3000;
+server.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+});
+
+** http://localhost:3000

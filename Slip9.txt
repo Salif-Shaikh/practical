@@ -1,0 +1,215 @@
+Q1. Design simple HR Application using Spring Framework
+
+Project Setup:
+Create a new Spring Boot project using a tool like Spring Initializer (https://start.spring.io/), or use your favorite IDE to generate a new Spring Boot project.
+
+Define Models:
+Define the necessary models to represent entities in your HR application. For example:
+
+java
+
+// Employee model
+public class Employee {
+    private Long id;
+    private String firstName;
+    private String lastName;
+    // Other fields, getters, and setters
+}
+
+// Department model
+public class Department {
+    private Long id;
+    private String name;
+    // Other fields, getters, and setters
+}
+
+Create Repositories:
+Create Spring Data JPA repositories to interact with your database:
+
+java
+
+// EmployeeRepository
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+    // Additional methods if needed
+}
+
+// DepartmentRepository
+public interface DepartmentRepository extends JpaRepository<Department, Long> {
+    // Additional methods if needed
+}
+
+Service Layer:
+Implement services to manage business logic:
+
+java
+
+// EmployeeService
+@Service
+public class EmployeeService {
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
+    }
+
+    // Other business logic methods
+}
+
+// DepartmentService
+@Service
+public class DepartmentService {
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+    public List<Department> getAllDepartments() {
+        return departmentRepository.findAll();
+    }
+
+    // Other business logic methods
+}
+
+Controller Layer:
+Create controllers to handle HTTP requests:
+
+java
+
+// EmployeeController
+@RestController
+@RequestMapping("/employees")
+public class EmployeeController {
+    @Autowired
+    private EmployeeService employeeService;
+
+    @GetMapping
+    public List<Employee> getAllEmployees() {
+        return employeeService.getAllEmployees();
+    }
+
+    // Other CRUD operations
+}
+
+// DepartmentController
+@RestController
+@RequestMapping("/departments")
+public class DepartmentController {
+    @Autowired
+    private DepartmentService departmentService;
+
+    @GetMapping
+    public List<Department> getAllDepartments() {
+        return departmentService.getAllDepartments();
+    }
+
+    // Other CRUD operations
+}
+
+Frontend (Optional):
+You can create frontend views using a template engine like Thymeleaf or a frontend framework like React or Angular, depending on your preference.
+
+Run the Application:
+Run your Spring Boot application and test the endpoints to ensure that everything is working as expected.
+
+
+
+Q2. Write a python program to implement Linear SVM.
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.svm import LinearSVC
+from sklearn.metrics import accuracy_score
+
+# Load iris dataset for demonstration
+iris = datasets.load_iris()
+X = iris.data[:, :2]  # Take only the first two features for simplicity
+y = (iris.target != 0) * 1  # Setosa (class 0) vs Versicolor and Virginica (class 1)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a Linear SVM classifier
+clf = LinearSVC()
+
+# Train the classifier
+clf.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = clf.predict(X_test)
+
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.2f}')
+
+# Plot the decision boundary
+def plot_decision_boundary(X, y, model, title):
+    h = .02  # Step size in the mesh
+    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+    Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
+    Z = Z.reshape(xx.shape)
+
+    plt.contourf(xx, yy, Z, cmap=plt.cm.coolwarm, alpha=0.3)
+    plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.coolwarm, edgecolors='k')
+    plt.title(title)
+    plt.xlabel('Feature 1')
+    plt.ylabel('Feature 2')
+    plt.show()
+
+# Plot decision boundary for the trained classifier
+plot_decision_boundary(X_test, y_test, clf, 'Linear SVM Decision Boundary')
+
+
+
+
+Q3. Create a node.js file that Select all records from the "customers" table, and display the
+result object on console.
+
+const mysql = require('mysql');
+
+// Create a connection to the MySQL server
+const connection = mysql.createConnection({
+  host: 'your_database_host', // replace with your MySQL database host
+  user: 'your_username',       // replace with your MySQL username
+  password: 'your_password',   // replace with your MySQL password
+  database: 'your_database'    // replace with your MySQL database name
+});
+
+// Connect to MySQL server
+connection.connect((err) => {
+  if (err) {
+    console.error('Error connecting to MySQL:', err.message);
+    return;
+  }
+
+  console.log('Connected to MySQL server');
+
+  // Select all records from the "customers" table
+  const query = 'SELECT * FROM customers';
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err.message);
+      connection.end();
+      return;
+    }
+
+    // Display the result object on the console
+    console.log('Result:', results);
+
+    // Close the MySQL connection
+    connection.end((err) => {
+      if (err) {
+        console.error('Error closing connection:', err.message);
+        return;
+      }
+
+      console.log('Connection closed');
+    });
+  });
+});
+
+

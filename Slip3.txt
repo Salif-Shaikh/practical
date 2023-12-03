@@ -1,0 +1,210 @@
+Q1. Write a JAVA Program to implement built-in support (java.util.Observable) Weather
+station with members temperature, humidity, pressure and methods
+mesurmentsChanged(), setMesurment(), getTemperature(), getHumidity(),
+getPressure()
+
+import java.util.Observable;
+import java.util.Observer;
+
+// WeatherData class represents the Weather Station
+class WeatherData extends Observable {
+    private float temperature;
+    private float humidity;
+    private float pressure;
+
+    // Constructor
+    public WeatherData() {
+        // Initialize with default values
+        this.temperature = 0.0f;
+        this.humidity = 0.0f;
+        this.pressure = 0.0f;
+    }
+
+    // Method to notify observers about changes in measurements
+    public void measurementsChanged() {
+        setChanged();
+        notifyObservers();
+    }
+
+    // Method to set new measurements
+    public void setMeasurements(float temperature, float humidity, float pressure) {
+        this.temperature = temperature;
+        this.humidity = humidity;
+        this.pressure = pressure;
+        measurementsChanged();
+    }
+
+    // Getter methods for temperature, humidity, and pressure
+    public float getTemperature() {
+        return temperature;
+    }
+
+    public float getHumidity() {
+        return humidity;
+    }
+
+    public float getPressure() {
+        return pressure;
+    }
+}
+
+// CurrentConditionsDisplay class represents an observer of the WeatherData
+class CurrentConditionsDisplay implements Observer {
+    private float temperature;
+    private float humidity;
+
+    // Constructor
+    public CurrentConditionsDisplay(Observable observable) {
+        // Register this display as an observer of the WeatherData
+        observable.addObserver(this);
+    }
+
+    // Update method called when the WeatherData changes
+    @Override
+    public void update(Observable observable, Object arg) {
+        if (observable instanceof WeatherData) {
+            WeatherData weatherData = (WeatherData) observable;
+            this.temperature = weatherData.getTemperature();
+            this.humidity = weatherData.getHumidity();
+            display();
+        }
+    }
+
+    // Display method to show the current conditions
+    public void display() {
+        System.out.println("Current conditions: " + temperature + "F degrees and " + humidity + "% humidity");
+    }
+}
+
+public class WeatherStationExample {
+    public static void main(String[] args) {
+        // Create a WeatherData (Weather Station)
+        WeatherData weatherData = new WeatherData();
+
+        // Create an observer (display)
+        CurrentConditionsDisplay currentConditionsDisplay = new CurrentConditionsDisplay(weatherData);
+
+        // Simulate measurements changes
+        weatherData.setMeasurements(80, 65, 30.4f);
+        weatherData.setMeasurements(82, 70, 29.2f);
+        weatherData.setMeasurements(78, 90, 29.2f);
+    }
+}
+
+Q2. Write a python program to make Categorical values in numeric format for a given
+dataset
+
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+
+# Sample dataset with categorical values
+data = {
+    'Category': ['A', 'B', 'A', 'C', 'B', 'C', 'A', 'B', 'C'],
+    'Value': [10, 20, 15, 25, 30, 22, 18, 16, 28]
+}
+
+# Create a DataFrame from the sample data
+df = pd.DataFrame(data)
+
+# Display the original dataset
+print("Original Dataset:")
+print(df)
+
+# Use LabelEncoder to convert categorical values to numeric format
+label_encoder = LabelEncoder()
+df['Category'] = label_encoder.fit_transform(df['Category'])
+
+# Display the dataset after encoding
+print("\nDataset after Encoding:")
+print(df)
+
+
+Q3. Create an HTML form for Login and write a JavaScript to validate email ID
+using Regular Expression.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #error-message {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Login Form</h2>
+
+<form id="loginForm" onsubmit="return validateForm()">
+    <label for="email">Email:</label>
+    <input type="text" id="email" name="email" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit">Login</button>
+</form>
+
+<div id="error-message"></div>
+
+<script>
+    function validateForm() {
+        var email = document.getElementById('email').value;
+
+        // Regular expression for validating email
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        var errorMessage = "";
+
+        if (!emailRegex.test(email)) {
+            errorMessage += "Invalid email address.\n";
+        }
+
+        // Display error message or submit the form
+        var errorMessageDiv = document.getElementById('error-message');
+        if (errorMessage !== "") {
+            errorMessageDiv.textContent = errorMessage;
+            return false; // Prevent form submission
+        } else {
+            errorMessageDiv.textContent = "";
+            return true; // Allow form submission
+        }
+    }
+</script>
+
+</body>
+</html>
+
