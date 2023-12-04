@@ -1,0 +1,414 @@
+Q1. Write a Java Program to implement State Pattern for Gumball Machine. Create
+instance variable that holds current state from there, we just need to handle all
+actions, behaviors and state transition that can happen 
+
+
+// GumballMachine.java - Context
+public class GumballMachine {
+    private State soldOutState;
+    private State noQuarterState;
+    private State hasQuarterState;
+    private State soldState;
+
+    private State currentState;
+    private int count = 0;
+
+    public GumballMachine(int numberOfGumballs) {
+        soldOutState = new SoldOutState(this);
+        noQuarterState = new NoQuarterState(this);
+        hasQuarterState = new HasQuarterState(this);
+        soldState = new SoldState(this);
+
+        this.count = numberOfGumballs;
+        if (numberOfGumballs > 0) {
+            currentState = noQuarterState;
+        } else {
+            currentState = soldOutState;
+        }
+    }
+
+    public void insertQuarter() {
+        currentState.insertQuarter();
+    }
+
+    public void ejectQuarter() {
+        currentState.ejectQuarter();
+    }
+
+    public void turnCrank() {
+        currentState.turnCrank();
+        currentState.dispense();
+    }
+
+    void setState(State state) {
+        this.currentState = state;
+    }
+
+    void releaseBall() {
+        System.out.println("A gumball comes rolling out the slot...");
+        if (count != 0) {
+            count = count - 1;
+        }
+    }
+
+    int getCount() {
+        return count;
+    }
+
+    State getSoldOutState() {
+        return soldOutState;
+    }
+
+    State getNoQuarterState() {
+        return noQuarterState;
+    }
+
+    State getHasQuarterState() {
+        return hasQuarterState;
+    }
+
+    State getSoldState() {
+        return soldState;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Gumball Machine [Count: %d, State: %s]", count, currentState);
+    }
+}
+
+// State.java - State Interface
+public interface State {
+    void insertQuarter();
+    void ejectQuarter();
+    void turnCrank();
+    void dispense();
+}
+
+// NoQuarterState.java - Concrete State
+public class NoQuarterState implements State {
+    private GumballMachine gumballMachine;
+
+    public NoQuarterState(GumballMachine gumballMachine) {
+        this.gumballMachine = gumballMachine;
+    }
+
+    @Override
+    public void insertQuarter() {
+        System.out.println("You inserted a quarter");
+        gumballMachine.setState(gumballMachine.getHasQuarterState());
+    }
+
+    @Override
+    public void ejectQuarter() {
+        System.out.println("You haven't inserted a quarter");
+    }
+
+    @Override
+    public void turnCrank() {
+        System.out.println("You turned but there's no quarter");
+    }
+
+    @Override
+    public void dispense() {
+        System.out.println("You need to pay first");
+    }
+
+    @Override
+    public String toString() {
+        return "No Quarter State";
+    }
+}
+
+// HasQuarterState.java - Concrete State
+public class HasQuarterState implements State {
+    private GumballMachine gumballMachine;
+
+    public HasQuarterState(GumballMachine gumballMachine) {
+        this.gumballMachine = gumballMachine;
+    }
+
+    @Override
+    public void insertQuarter() {
+        System.out.println("You can't insert another quarter");
+    }
+
+    @Override
+    public void ejectQuarter() {
+        System.out.println("Quarter returned");
+        gumballMachine.setState(gumballMachine.getNoQuarterState());
+    }
+
+    @Override
+    public void turnCrank() {
+        System.out.println("You turned...");
+        gumballMachine.setState(gumballMachine.getSoldState());
+    }
+
+    @Override
+    public void dispense() {
+        System.out.println("No gumball dispensed");
+    }
+
+    @Override
+    public String toString() {
+        return "Has Quarter State";
+    }
+}
+
+// SoldState.java - Concrete State
+public class SoldState implements State {
+    private GumballMachine gumballMachine;
+
+    public SoldState(GumballMachine gumballMachine) {
+        this.gumballMachine = gumballMachine;
+    }
+
+    @Override
+    public void insertQuarter() {
+        System.out.println("Please wait, we're already giving you a gumball");
+    }
+
+    @Override
+    public void ejectQuarter() {
+        System.out.println("Sorry, you already turned the crank");
+    }
+
+    @Override
+    public void turnCrank() {
+        System.out.println("Turning twice doesn't get you another gumball!");
+    }
+
+    @Override
+    public void dispense() {
+        gumballMachine.releaseBall();
+        if (gumballMachine.getCount() > 0) {
+            gumballMachine.setState(gumballMachine.getNoQuarterState());
+        } else {
+            System.out.println("Oops, out of gumballs!");
+            gumballMachine.setState(gumballMachine.getSoldOutState());
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Sold State";
+    }
+}
+
+// SoldOutState.java - Concrete State
+public class SoldOutState implements State {
+    private GumballMachine gumballMachine;
+
+    public SoldOutState(GumballMachine gumballMachine) {
+        this.gumballMachine = gumballMachine;
+    }
+
+    @Override
+    public void insertQuarter() {
+        System.out.println("Sorry, the machine is sold out");
+    }
+
+    @Override
+    public void ejectQuarter() {
+        System.out.println("You can't eject, you haven't inserted a quarter yet");
+    }
+
+    @Override
+    public void turnCrank() {
+        System.out.println("You turned, but there are no gumballs");
+    }
+
+    @Override
+    public void dispense() {
+        System.out.println("No gumball dispensed");
+    }
+
+    @Override
+    public String toString() {
+        return "Sold Out State";
+    }
+}
+
+// GumballMachineTestDrive.java - Test the Gumball Machine
+public class GumballMachineTestDrive {
+    public static void main(String[] args) {
+        GumballMachine gumballMachine = new GumballMachine(5);
+
+        System.out.println(gumballMachine);
+
+        gumballMachine.insertQuarter();
+        gumballMachine.turnCrank();
+
+        System.out.println(gumballMachine);
+
+        gumballMachine.insertQuarter();
+        gumballMachine.turnCrank();
+        gumballMachine.insertQuarter();
+        gumballMachine.turnCrank();
+
+        System.out.println(gumballMachine);
+    }
+}
+
+
+
+
+
+Q2. Write a python program to find all null values in a given dataset and remove them
+
+import pandas as pd
+
+# Sample dataset with null values
+data = {'Name': ['Alice', 'Bob', 'Charlie', None, 'Eve'],
+        'Age': [25, None, 30, 22, 35],
+        'Salary': [50000, 60000, None, 45000, 70000]}
+
+df = pd.DataFrame(data)
+
+# Display the original dataset
+print("Original Dataset:")
+print(df)
+
+# Find null values in the dataset
+null_values = df.isnull()
+
+# Display locations of null values
+print("\nNull Values in the Dataset:")
+print(null_values)
+
+# Remove rows with null values
+df_cleaned = df.dropna()
+
+# Display the cleaned dataset
+print("\nDataset after removing null values:")
+print(df_cleaned)
+
+
+
+
+
+
+
+
+Q3.  Create your own blog using Django
+
+Creating a blog using Django involves several steps, from setting up a Django project to defining models, views, and templates. Below is a simplified example to get you started. This example assumes that you already have Django installed. If not, you can install it using:
+
+```bash
+pip install django
+```
+
+### Step 1: Create a Django Project and App
+
+```bash
+django-admin startproject myblog
+cd myblog
+python manage.py startapp blog
+```
+
+### Step 2: Define Models
+
+Edit `blog/models.py` to define models for your blog posts:
+
+```python
+# blog/models.py
+from django.db import models
+from django.urls import reverse
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    pub_date = models.DateTimeField(auto_now_add=True)
+
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
+
+    def __str__(self):
+        return self.title
+```
+
+### Step 3: Configure Database and Apply Migrations
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### Step 4: Create Views
+
+Edit `blog/views.py` to define views for your blog:
+
+```python
+# blog/views.py
+from django.shortcuts import render, get_object_or_404
+from .models import Post
+
+def post_list(request):
+    posts = Post.objects.all()
+    return render(request, 'blog/post_list.html', {'posts': posts})
+
+def post_detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    return render(request, 'blog/post_detail.html', {'post': post})
+```
+
+### Step 5: Create Templates
+
+Create a `templates` folder inside the `blog` folder. Inside this folder, create `post_list.html`:
+
+```html
+<!-- blog/templates/blog/post_list.html -->
+{% for post in posts %}
+  <h2><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h2>
+  <p>{{ post.pub_date }}</p>
+  <p>{{ post.content }}</p>
+{% endfor %}
+```
+
+Create `post_detail.html`:
+
+```html
+<!-- blog/templates/blog/post_detail.html -->
+<h2>{{ post.title }}</h2>
+<p>{{ post.pub_date }}</p>
+<p>{{ post.content }}</p>
+```
+
+### Step 6: Configure URLs
+
+Edit `blog/urls.py` to define URLs for your blog:
+
+```python
+# blog/urls.py
+from django.urls import path
+from .views import post_list, post_detail
+
+urlpatterns = [
+    path('', post_list, name='post_list'),
+    path('post/<int:pk>/', post_detail, name='post_detail'),
+]
+```
+
+Include these URLs in the project's `urls.py`:
+
+```python
+# myblog/urls.py
+from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('blog/', include('blog.urls')),
+]
+```
+
+### Step 7: Run the Development Server
+
+```bash
+python manage.py runserver
+```
+
+Visit `http://127.0.0.1:8000/blog/` in your web browser to see the list of blog posts.
+
+This is a basic example, and you can extend it by adding more features, improving the user interface, and incorporating user authentication for managing blog posts. Additionally, you might want to consider using Django templates and static files for a better-looking blog.
