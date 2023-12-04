@@ -1,0 +1,223 @@
+Q1. Write a Java Program to implement Strategy Pattern for Duck Behavior. Create
+instance variable that holds current state of Duck from there, we just need to handle all
+Flying Behaviors and Quack Behavior
+
+
+// FlyBehavior interface
+interface FlyBehavior {
+    void fly();
+}
+
+// QuackBehavior interface
+interface QuackBehavior {
+    void quack();
+}
+
+// Concrete implementations of FlyBehavior
+
+class FlyWithWings implements FlyBehavior {
+    @Override
+    public void fly() {
+        System.out.println("Flying with wings");
+    }
+}
+
+class FlyNoWay implements FlyBehavior {
+    @Override
+    public void fly() {
+        System.out.println("Cannot fly");
+    }
+}
+
+// Concrete implementations of QuackBehavior
+
+class Quack implements QuackBehavior {
+    @Override
+    public void quack() {
+        System.out.println("Quack");
+    }
+}
+
+class Squeak implements QuackBehavior {
+    @Override
+    public void quack() {
+        System.out.println("Squeak");
+    }
+}
+
+class MuteQuack implements QuackBehavior {
+    @Override
+    public void quack() {
+        System.out.println("Silent quack");
+    }
+}
+
+// Duck class with instance variables for flying and quacking behaviors
+
+class Duck {
+    private FlyBehavior flyBehavior;
+    private QuackBehavior quackBehavior;
+
+    public Duck(FlyBehavior flyBehavior, QuackBehavior quackBehavior) {
+        this.flyBehavior = flyBehavior;
+        this.quackBehavior = quackBehavior;
+    }
+
+    public void performFly() {
+        flyBehavior.fly();
+    }
+
+    public void performQuack() {
+        quackBehavior.quack();
+    }
+
+    public void swim() {
+        System.out.println("All ducks float, even decoys!");
+    }
+}
+
+// Example usage
+
+public class DuckSimulator {
+    public static void main(String[] args) {
+        // Create a duck with flying and quacking behaviors
+        Duck mallardDuck = new Duck(new FlyWithWings(), new Quack());
+
+        // Test behaviors
+        System.out.println("Mallard Duck:");
+        mallardDuck.performFly();
+        mallardDuck.performQuack();
+        mallardDuck.swim();
+
+        // Create a rubber duck with different behaviors
+        Duck rubberDuck = new Duck(new FlyNoWay(), new Squeak());
+
+        // Test behaviors
+        System.out.println("\nRubber Duck:");
+        rubberDuck.performFly();
+        rubberDuck.performQuack();
+        rubberDuck.swim();
+    }
+}
+
+
+
+
+
+Q2. Write a python program to implement Multiple Linear Regression for given dataset
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Sample dataset with multiple features
+data = {
+    'Feature1': [1, 2, 3, 4, 5],
+    'Feature2': [2, 3, 4, 5, 6],
+    'Feature3': [3, 4, 5, 6, 7],
+    'Target': [5, 8, 11, 14, 17]
+}
+
+df = pd.DataFrame(data)
+
+# Split the data into features (X) and target variable (y)
+X = df[['Feature1', 'Feature2', 'Feature3']]
+y = df['Target']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a Linear Regression model
+model = LinearRegression()
+
+# Train the model on the training set
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+# Print model parameters
+print("Coefficients:", model.coef_)
+print("Intercept:", model.intercept_)
+print("Mean Squared Error:", mse)
+print("R-squared:", r2)
+
+
+
+
+
+Q3. Create a Node.js file that demonstrates create database and table in MySQL
+
+const mysql = require('mysql');
+
+// Create a MySQL connection
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'your_username',
+  password: 'your_password',
+  database: 'your_database_name'
+});
+
+// Connect to the MySQL server
+connection.connect((err) => {
+  if (err) {
+    console.error('Error connecting to MySQL:', err);
+    return;
+  }
+
+  console.log('Connected to MySQL');
+
+  // Create a database
+  connection.query('CREATE DATABASE IF NOT EXISTS mydatabase', (err) => {
+    if (err) {
+      console.error('Error creating database:', err);
+      return;
+    }
+
+    console.log('Database created or already exists');
+
+    // Use the created database
+    connection.query('USE mydatabase', (err) => {
+      if (err) {
+        console.error('Error selecting database:', err);
+        return;
+      }
+
+      console.log('Using database');
+
+      // Create a table
+      const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS users (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          username VARCHAR(50) NOT NULL,
+          email VARCHAR(100) NOT NULL
+        )
+      `;
+
+      connection.query(createTableQuery, (err) => {
+        if (err) {
+          console.error('Error creating table:', err);
+          return;
+        }
+
+        console.log('Table created or already exists');
+
+        // Close the connection
+        connection.end((err) => {
+          if (err) {
+            console.error('Error closing connection:', err);
+            return;
+          }
+
+          console.log('Connection closed');
+        });
+      });
+    });
+  });
+});
+
