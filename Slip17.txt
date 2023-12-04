@@ -1,0 +1,151 @@
+Q1. Write a Java Program to implement Abstract Factory Pattern for Shape interface
+
+// Shape interface
+interface Shape {
+    void draw();
+}
+
+// Concrete implementations of Shape
+class Circle implements Shape {
+    @Override
+    public void draw() {
+        System.out.println("Drawing Circle");
+    }
+}
+
+class Square implements Shape {
+    @Override
+    public void draw() {
+        System.out.println("Drawing Square");
+    }
+}
+
+// Abstract Factory interface
+interface ShapeFactory {
+    Shape createShape();
+}
+
+// Concrete implementations of ShapeFactory
+class CircleFactory implements ShapeFactory {
+    @Override
+    public Shape createShape() {
+        return new Circle();
+    }
+}
+
+class SquareFactory implements ShapeFactory {
+    @Override
+    public Shape createShape() {
+        return new Square();
+    }
+}
+
+// Client class using the abstract factory
+public class AbstractFactoryPatternExample {
+    public static void main(String[] args) {
+        // Creating a Circle using CircleFactory
+        ShapeFactory circleFactory = new CircleFactory();
+        Shape circle = circleFactory.createShape();
+        circle.draw();
+
+        // Creating a Square using SquareFactory
+        ShapeFactory squareFactory = new SquareFactory();
+        Shape square = squareFactory.createShape();
+        square.draw();
+    }
+}
+
+
+
+
+
+
+
+Q2. Write a python program to implement Multiple Linear Regression for a given dataset
+
+
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+# Generate some sample data for illustration
+np.random.seed(42)
+
+# Creating a sample dataset with three independent variables and one dependent variable
+data = {
+    'Feature1': np.random.rand(100) * 50 + 30,
+    'Feature2': np.random.rand(100) * 20 + 10,
+    'Feature3': np.random.rand(100) * 100,
+    'Target': 5 * np.random.rand(100) + 3
+}
+
+# Convert the data into a pandas DataFrame
+df = pd.DataFrame(data)
+
+# Split the data into features (X) and target variable (y)
+X = df[['Feature1', 'Feature2', 'Feature3']]
+y = df['Target']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a linear regression model
+model = LinearRegression()
+
+# Train the model
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+
+# Print the coefficients and intercept
+print('Coefficients:', model.coef_)
+print('Intercept:', model.intercept_)
+
+
+
+
+
+Q3. Write node js application that transfer a file as an attachment on web and enables
+browser to prompt the user to download file using express js. 
+
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
+
+const app = express();
+const port = 3000;
+
+// Set up a route to handle file download
+app.get('/download', (req, res) => {
+    const filePath = path.join(__dirname, 'files', 'example.txt'); // Replace with your file path
+    const fileName = 'downloaded_file.txt'; // Replace with your desired file name
+
+    // Set the content type and header for file download
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
+
+    // Create a readable stream from the file and pipe it to the response
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
+
+    // Handle errors during the streaming
+    fileStream.on('error', (err) => {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    });
+});
+
+// Start the server
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});
+
+
+Visit http://localhost:3000/download in your web browser, and it should prompt you to download the file.
