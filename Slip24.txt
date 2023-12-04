@@ -1,0 +1,329 @@
+Q1. Write a Java Program to implement Iterator Pattern for Designing Menu like Breakfast,
+Lunch or Dinner Menu 
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+// Menu Item class representing items in the menu
+class MenuItem {
+    private String name;
+    private String description;
+
+    public MenuItem(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public String toString() {
+        return name + " - " + description;
+    }
+}
+
+// Menu interface defining the methods for the menu
+interface Menu {
+    Iterator<MenuItem> createIterator();
+}
+
+// Breakfast Menu class implementing Menu interface
+class BreakfastMenu implements Menu {
+    private ArrayList<MenuItem> items;
+
+    public BreakfastMenu() {
+        items = new ArrayList<>();
+        addItem("Pancakes", "Fluffy pancakes with syrup");
+        addItem("Omelette", "Omelette with cheese and vegetables");
+        addItem("Toast", "Crispy toast with butter and jam");
+    }
+
+    public void addItem(String name, String description) {
+        MenuItem menuItem = new MenuItem(name, description);
+        items.add(menuItem);
+    }
+
+    @Override
+    public Iterator<MenuItem> createIterator() {
+        return items.iterator();
+    }
+}
+
+// Lunch Menu class implementing Menu interface
+class LunchMenu implements Menu {
+    private MenuItem[] items;
+    private int size;
+
+    public LunchMenu() {
+        items = new MenuItem[5];
+        addItem("Chicken Burger", "Grilled chicken burger with fries");
+        addItem("Vegetarian Wrap", "Vegetarian wrap with hummus");
+        addItem("Caesar Salad", "Classic Caesar salad with grilled chicken");
+    }
+
+    public void addItem(String name, String description) {
+        if (size < items.length) {
+            MenuItem menuItem = new MenuItem(name, description);
+            items[size] = menuItem;
+            size++;
+        }
+    }
+
+    @Override
+    public Iterator<MenuItem> createIterator() {
+        return new LunchMenuIterator(items);
+    }
+
+    // Inner class implementing Iterator for LunchMenu
+    private class LunchMenuIterator implements Iterator<MenuItem> {
+        private MenuItem[] items;
+        private int position;
+
+        public LunchMenuIterator(MenuItem[] items) {
+            this.items = items;
+            this.position = 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return position < items.length && items[position] != null;
+        }
+
+        @Override
+        public MenuItem next() {
+            MenuItem menuItem = items[position];
+            position++;
+            return menuItem;
+        }
+    }
+}
+
+// Waitress class to display menus
+class Waitress {
+    private Menu breakfastMenu;
+    private Menu lunchMenu;
+
+    public Waitress(Menu breakfastMenu, Menu lunchMenu) {
+        this.breakfastMenu = breakfastMenu;
+        this.lunchMenu = lunchMenu;
+    }
+
+    public void printMenu() {
+        System.out.println("Breakfast Menu:");
+        printMenu(breakfastMenu.createIterator());
+
+        System.out.println("\nLunch Menu:");
+        printMenu(lunchMenu.createIterator());
+    }
+
+    private void printMenu(Iterator<MenuItem> iterator) {
+        while (iterator.hasNext()) {
+            MenuItem menuItem = iterator.next();
+            System.out.println(menuItem);
+        }
+    }
+}
+
+// Main class to run the program
+public class IteratorPatternExample {
+    public static void main(String[] args) {
+        Menu breakfastMenu = new BreakfastMenu();
+        Menu lunchMenu = new LunchMenu();
+
+        Waitress waitress = new Waitress(breakfastMenu, lunchMenu);
+        waitress.printMenu();
+    }
+}
+
+
+
+
+Q2. Write a python program to make Categorical values in numeric format for a given
+dataset
+
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+
+# Sample dataset with categorical values
+data = {
+    'Color': ['Red', 'Green', 'Blue', 'Red', 'Green', 'Blue'],
+    'Size': ['Small', 'Medium', 'Large', 'Medium', 'Small', 'Medium'],
+    'Label': ['A', 'B', 'C', 'A', 'B', 'C']
+}
+
+df = pd.DataFrame(data)
+
+# Display the original dataset
+print("Original Dataset:")
+print(df)
+
+# Initialize LabelEncoder
+label_encoder = LabelEncoder()
+
+# Convert categorical columns to numeric
+df['Color'] = label_encoder.fit_transform(df['Color'])
+df['Size'] = label_encoder.fit_transform(df['Size'])
+df['Label'] = label_encoder.fit_transform(df['Label'])
+
+# Display the dataset after encoding
+print("\nDataset after encoding:")
+print(df)
+
+
+
+
+
+Q3. Implement Login System using Django.
+
+Implementing a login system using Django involves several steps. Below is a simple example that demonstrates user authentication and login functionality. This example assumes that you have already set up a Django project and created an app. If not, you can follow the steps in the Django documentation to create a project and an app.
+
+### Step 1: Define Models
+
+Edit `models.py` in your app to include a `UserProfile` model:
+
+```python
+# models.py
+from django.db import models
+from django.contrib.auth.models import User
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # Add additional user profile fields if needed
+    # For example: profile_picture = models.ImageField(upload_to='profile_pics/', blank=True)
+
+    def __str__(self):
+        return self.user.username
+```
+
+### Step 2: Run Migrations
+
+Run the following commands to apply migrations:
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### Step 3: Create Forms
+
+Create a `forms.py` file in your app:
+
+```python
+# forms.py
+from django import forms
+from django.contrib.auth.forms import AuthenticationForm
+
+class UserLoginForm(AuthenticationForm):
+    # Add custom fields if needed
+    # For example: custom_field = forms.CharField()
+```
+
+### Step 4: Create Views
+
+Create a `views.py` file in your app:
+
+```python
+# views.py
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from .forms import UserLoginForm
+
+def user_login(request):
+    if request.method == 'POST':
+        form = UserLoginForm(request, request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, f'Welcome, {username}!')
+                return redirect('home')  # Replace 'home' with the name of your home view
+            else:
+                messages.error(request, 'Invalid username or password.')
+    else:
+        form = UserLoginForm()
+    return render(request, 'login.html', {'form': form})
+
+def user_logout(request):
+    logout(request)
+    messages.success(request, 'Logged out successfully.')
+    return redirect('home')  # Replace 'home' with the name of your home view
+```
+
+### Step 5: Create Templates
+
+Create a `templates` folder inside your app and add a `login.html` template:
+
+```html
+<!-- login.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Login</h2>
+  <form method="post" action="{% url 'user_login' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button>
+  </form>
+{% endblock %}
+```
+
+### Step 6: Configure URLs
+
+Update your app's `urls.py`:
+
+```python
+# urls.py
+from django.urls import path
+from .views import user_login, user_logout
+
+urlpatterns = [
+    path('login/', user_login, name='user_login'),
+    path('logout/', user_logout, name='user_logout'),
+    # Add other URLs if needed
+]
+```
+
+Include these URLs in the main project's `urls.py`:
+
+```python
+# myproject/urls.py
+from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('user/', include('yourapp.urls')),  # Replace 'yourapp' with the name of your app
+    # Add other app URLs or your home URL
+]
+```
+
+### Step 7: Create Superuser
+
+Run the following command to create a superuser:
+
+```bash
+python manage.py createsuperuser
+```
+
+Follow the prompts to create a superuser account.
+
+### Step 8: Run the Development Server
+
+Run the development server:
+
+```bash
+python manage.py runserver
+```
+
+Visit `http://127.0.0.1:8000/user/login/` in your web browser to access the login page. Use the superuser credentials created in Step 7 to log in.
+
+This is a basic example, and you can extend it by adding registration functionality, user profile pages, and other features based on your requirements. Additionally, consider using Django's built-in `LoginView` and `LogoutView` for more advanced use cases.
