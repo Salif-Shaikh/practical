@@ -1,0 +1,211 @@
+Q1. Write a Java Program to implement Observer Design Pattern for number conversion.
+Accept a number in Decimal form and represent it in Hexadecimal, Octal and Binary.
+Change the Number and it reflects in other forms also 
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+// Subject interface
+interface NumberSubject {
+    void addObserver(NumberObserver observer);
+    void removeObserver(NumberObserver observer);
+    void notifyObservers();
+    int getNumber();
+    void setNumber(int number);
+}
+
+// Concrete Subject
+class NumberConverter implements NumberSubject {
+    private int number;
+    private List<NumberObserver> observers;
+
+    public NumberConverter() {
+        this.observers = new ArrayList<>();
+    }
+
+    @Override
+    public void addObserver(NumberObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(NumberObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (NumberObserver observer : observers) {
+            observer.update();
+        }
+    }
+
+    @Override
+    public int getNumber() {
+        return number;
+    }
+
+    @Override
+    public void setNumber(int number) {
+        this.number = number;
+        notifyObservers();
+    }
+}
+
+// Observer interface
+interface NumberObserver {
+    void update();
+}
+
+// Concrete Observers
+class HexObserver implements NumberObserver {
+    private NumberSubject subject;
+
+    public HexObserver(NumberSubject subject) {
+        this.subject = subject;
+        subject.addObserver(this);
+    }
+
+    @Override
+    public void update() {
+        System.out.println("Hexadecimal: " + Integer.toHexString(subject.getNumber()));
+    }
+}
+
+class OctalObserver implements NumberObserver {
+    private NumberSubject subject;
+
+    public OctalObserver(NumberSubject subject) {
+        this.subject = subject;
+        subject.addObserver(this);
+    }
+
+    @Override
+    public void update() {
+        System.out.println("Octal: " + Integer.toOctalString(subject.getNumber()));
+    }
+}
+
+class BinaryObserver implements NumberObserver {
+    private NumberSubject subject;
+
+    public BinaryObserver(NumberSubject subject) {
+        this.subject = subject;
+        subject.addObserver(this);
+    }
+
+    @Override
+    public void update() {
+        System.out.println("Binary: " + Integer.toBinaryString(subject.getNumber()));
+    }
+}
+
+// Main class
+public class NumberConversionObserverPattern {
+    public static void main(String[] args) {
+        NumberConverter numberConverter = new NumberConverter();
+
+        HexObserver hexObserver = new HexObserver(numberConverter);
+        OctalObserver octalObserver = new OctalObserver(numberConverter);
+        BinaryObserver binaryObserver = new BinaryObserver(numberConverter);
+
+        // Set the initial number
+        numberConverter.setNumber(10);
+
+        // Change the number and observe the changes in different formats
+        numberConverter.setNumber(20);
+        numberConverter.setNumber(50);
+    }
+}
+
+
+
+
+Q2. Write a python program to Implement Simple Linear Regression for predicting house
+price. 
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+# Generate some sample data for illustration
+np.random.seed(42)
+house_size = np.random.randint(1000, 3000, 100)
+house_price = 100000 + 300 * house_size + np.random.normal(0, 10000, 100)
+
+# Reshape data to fit the model
+house_size = house_size.reshape(-1, 1)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(house_size, house_price, test_size=0.2, random_state=42)
+
+# Create a linear regression model
+model = LinearRegression()
+
+# Train the model
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+
+# Plot the regression line
+plt.scatter(X_test, y_test, color='black')
+plt.plot(X_test, y_pred, color='blue', linewidth=3)
+plt.title('Simple Linear Regression: House Price Prediction')
+plt.xlabel('House Size (sq. ft.)')
+plt.ylabel('House Price ($)')
+plt.show()
+
+
+
+
+Q3. Create a js file named main.js for event-driven application. There should be a main loop
+that listens for events, and then triggers a callback function when one of those
+events is detected. 
+
+// main.js
+
+// Function to be called when the button is clicked
+function buttonClickHandler() {
+    console.log('Button clicked!');
+    // Add your logic here
+}
+
+// Attach the click event listener to the button
+document.getElementById('myButton').addEventListener('click', buttonClickHandler);
+
+// Main loop to listen for events
+function mainLoop() {
+    // Your main loop logic goes here
+
+    // You can check for other events or perform other tasks in the loop
+}
+
+// Set up an interval to repeatedly check for events in the main loop
+setInterval(mainLoop, 1000); // 1000 milliseconds (1 second) interval, adjust as needed
+
+Create HTML File with below Content.
+
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event-Driven Application</title>
+</head>
+<body>
+    <button id="myButton">Click me</button>
+    <script src="main.js"></script>
+</body>
+</html>
+ 
