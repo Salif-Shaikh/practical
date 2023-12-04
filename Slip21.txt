@@ -1,0 +1,273 @@
+Q1. Write a Java Program to implement command pattern to test Remote Control
+
+// Command interface
+interface Command {
+    void execute();
+}
+
+// Concrete Command classes
+class TVOnCommand implements Command {
+    private TV tv;
+
+    public TVOnCommand(TV tv) {
+        this.tv = tv;
+    }
+
+    @Override
+    public void execute() {
+        tv.turnOn();
+    }
+}
+
+class TVOffCommand implements Command {
+    private TV tv;
+
+    public TVOffCommand(TV tv) {
+        this.tv = tv;
+    }
+
+    @Override
+    public void execute() {
+        tv.turnOff();
+    }
+}
+
+// Receiver class
+class TV {
+    public void turnOn() {
+        System.out.println("TV is ON");
+    }
+
+    public void turnOff() {
+        System.out.println("TV is OFF");
+    }
+}
+
+// Invoker class
+class RemoteControl {
+    private Command command;
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void pressButton() {
+        command.execute();
+    }
+}
+
+// Client class
+public class RemoteControlTest {
+    public static void main(String[] args) {
+        // Create instances of the TV and commands
+        TV tv = new TV();
+        Command tvOn = new TVOnCommand(tv);
+        Command tvOff = new TVOffCommand(tv);
+
+        // Create a remote control and set the commands
+        RemoteControl remote = new RemoteControl();
+        remote.setCommand(tvOn);
+
+        // Press the button to turn on the TV
+        remote.pressButton();
+
+        // Set a different command and press the button again
+        remote.setCommand(tvOff);
+        remote.pressButton();
+    }
+}
+
+
+
+
+
+Q2. Write a python program to implement Linear SVM. 
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+# Load the iris dataset
+iris = datasets.load_iris()
+X = iris.data[:, :2]  # Use only the first two features for simplicity
+y = iris.target
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a linear SVM classifier
+svm_classifier = SVC(kernel='linear')
+
+# Train the classifier on the training set
+svm_classifier.fit(X_train, y_train)
+
+# Make predictions on the testing set
+y_pred = svm_classifier.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.2f}')
+
+# Plot decision boundaries
+def plot_decision_boundary(X, y, model, title):
+    h = .02  # Step size in the mesh
+    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+
+    Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
+    Z = Z.reshape(xx.shape)
+
+    plt.contourf(xx, yy, Z, cmap=plt.cm.coolwarm, alpha=0.8)
+    plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.coolwarm, edgecolors='k', marker='o')
+    plt.title(title)
+    plt.xlabel('Feature 1')
+    plt.ylabel('Feature 2')
+    plt.show()
+
+# Plot decision boundaries for the training set
+plot_decision_boundary(X_train, y_train, svm_classifier, 'Linear SVM - Training Set')
+
+# Plot decision boundaries for the testing set
+plot_decision_boundary(X_test, y_test, svm_classifier, 'Linear SVM - Testing Set')
+
+
+
+
+
+
+
+
+Q3. Design a Django application: A public site in which user can pick their favourite
+programming language and vote. 
+
+To design a Django application for a public site where users can pick their favorite programming language and vote, follow these steps:
+
+### Step 1: Create a Django Project
+
+```bash
+django-admin startproject languagepoll
+cd languagepoll
+```
+
+### Step 2: Create a Django App
+
+```bash
+python manage.py startapp poll
+```
+
+### Step 3: Define Models
+
+Edit `poll/models.py` to define the models for the poll application:
+
+```python
+# poll/models.py
+from django.db import models
+
+class ProgrammingLanguage(models.Model):
+    name = models.CharField(max_length=200)
+    votes = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+```
+
+### Step 4: Register Models in Admin Panel
+
+Edit `poll/admin.py` to register the `ProgrammingLanguage` model in the admin panel:
+
+```python
+# poll/admin.py
+from django.contrib import admin
+from .models import ProgrammingLanguage
+
+admin.site.register(ProgrammingLanguage)
+```
+
+### Step 5: Create Database and Apply Migrations
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### Step 6: Create Views
+
+Edit `poll/views.py` to define views for the public site:
+
+```python
+# poll/views.py
+from django.shortcuts import render
+from django.http import HttpResponse
+from .models import ProgrammingLanguage
+
+def index(request):
+    languages = ProgrammingLanguage.objects.all()
+    return render(request, 'poll/index.html', {'languages': languages})
+
+def vote(request, language_id):
+    language = ProgrammingLanguage.objects.get(pk=language_id)
+    language.votes += 1
+    language.save()
+    return HttpResponse("Thanks for voting!")
+```
+
+### Step 7: Create URLs
+
+Create a `urls.py` file inside the `poll` folder:
+
+```python
+# poll/urls.py
+from django.urls import path
+from .views import index, vote
+
+urlpatterns = [
+    path('', index, name='index'),
+    path('<int:language_id>/vote/', vote, name='vote'),
+]
+```
+
+Include these URLs in the project's `urls.py`:
+
+```python
+# languagepoll/urls.py
+from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('poll/', include('poll.urls')),
+]
+```
+
+### Step 8: Create Templates
+
+Create a `templates` folder inside the `poll` folder. Inside this folder, create `index.html`:
+
+```html
+<!-- poll/templates/poll/index.html -->
+<h1>Vote for Your Favorite Programming Language</h1>
+<ul>
+  {% for language in languages %}
+    <li>{{ language.name }} - {{ language.votes }} votes
+      <form action="{% url 'vote' language.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Vote</button>
+      </form>
+    </li>
+  {% endfor %}
+</ul>
+```
+
+### Step 9: Run the Development Server
+
+```bash
+python manage.py runserver
+```
+
+Visit `http://127.0.0.1:8000/poll/` in your web browser for the public site.
+
+This is a basic example, and you can extend it by adding more features and improving the user interface based on your requirements.
