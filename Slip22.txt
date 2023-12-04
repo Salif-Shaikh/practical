@@ -1,0 +1,281 @@
+Q1. Design simple HR Application using Spring Framework 
+
+Designing a simple HR application using the Spring Framework involves creating various components for managing employees, departments, and other HR-related functionalities. Below is a basic example demonstrating the structure of a Spring-based HR application.
+
+### Step 1: Create a Spring Boot Project
+
+You can use Spring Initializr to create a new Spring Boot project. Include the necessary dependencies such as "Spring Web," "Spring Data JPA," and "H2 Database" (or any other database of your choice).
+
+### Step 2: Define Entity Classes
+
+Create entity classes representing the main entities in your HR application, such as `Employee` and `Department`. These classes should be annotated with JPA annotations for database mapping.
+
+```java
+// Employee.java
+@Entity
+public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String firstName;
+    private String lastName;
+    private String position;
+
+    // getters and setters
+}
+
+// Department.java
+@Entity
+public class Department {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    // getters and setters
+}
+```
+
+### Step 3: Create Repositories
+
+Create repositories to interact with the database using Spring Data JPA.
+
+```java
+// EmployeeRepository.java
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+    // Custom queries can be added if needed
+}
+
+// DepartmentRepository.java
+public interface DepartmentRepository extends JpaRepository<Department, Long> {
+}
+```
+
+### Step 4: Implement Services
+
+Create services to handle business logic. For example, you might have an `EmployeeService` and a `DepartmentService`.
+
+```java
+// EmployeeService.java
+@Service
+public class EmployeeService {
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
+    }
+
+    public Employee saveEmployee(Employee employee) {
+        return employeeRepository.save(employee);
+    }
+
+    // Other business logic methods
+}
+
+// DepartmentService.java
+@Service
+public class DepartmentService {
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+    public List<Department> getAllDepartments() {
+        return departmentRepository.findAll();
+    }
+
+    public Department saveDepartment(Department department) {
+        return departmentRepository.save(department);
+    }
+
+    // Other business logic methods
+}
+```
+
+### Step 5: Implement Controllers
+
+Create controllers to handle HTTP requests and interact with services.
+
+```java
+// EmployeeController.java
+@RestController
+@RequestMapping("/employees")
+public class EmployeeController {
+    @Autowired
+    private EmployeeService employeeService;
+
+    @GetMapping
+    public List<Employee> getAllEmployees() {
+        return employeeService.getAllEmployees();
+    }
+
+    @PostMapping
+    public Employee saveEmployee(@RequestBody Employee employee) {
+        return employeeService.saveEmployee(employee);
+    }
+
+    // Other endpoints for employee-related operations
+}
+
+// DepartmentController.java
+@RestController
+@RequestMapping("/departments")
+public class DepartmentController {
+    @Autowired
+    private DepartmentService departmentService;
+
+    @GetMapping
+    public List<Department> getAllDepartments() {
+        return departmentService.getAllDepartments();
+    }
+
+    @PostMapping
+    public Department saveDepartment(@RequestBody Department department) {
+        return departmentService.saveDepartment(department);
+    }
+
+    // Other endpoints for department-related operations
+}
+```
+
+### Step 6: Configure Database
+
+Configure the database connection in the `application.properties` or `application.yml` file.
+
+```properties
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+```
+
+### Step 7: Run the Application
+
+Run your Spring Boot application, and it should start a web server at `http://localhost:8080`.
+
+This is a basic outline, and you can extend the application by adding more features, security, and validation based on your specific requirements.
+
+
+
+
+
+
+
+Q2. Write a Python program to prepare Scatter Plot for Iris Dataset 
+
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+import pandas as pd
+
+# Load Iris dataset
+iris = load_iris()
+data = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+data['target'] = iris.target
+target_names = iris.target_names
+
+# Create scatter plot
+plt.figure(figsize=(10, 8))
+
+# Scatter plot for Sepal Length and Sepal Width
+plt.scatter(data['sepal length (cm)'][data.target == 0], data['sepal width (cm)'][data.target == 0], c='r', label=target_names[0])
+plt.scatter(data['sepal length (cm)'][data.target == 1], data['sepal width (cm)'][data.target == 1], c='g', label=target_names[1])
+plt.scatter(data['sepal length (cm)'][data.target == 2], data['sepal width (cm)'][data.target == 2], c='b', label=target_names[2])
+
+# Set labels and title
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Sepal Width (cm)')
+plt.title('Scatter Plot for Iris Dataset - Sepal Length vs Sepal Width')
+
+# Show legend
+plt.legend()
+
+# Show the plot
+plt.show()
+
+
+
+
+Q3. Design a Django application: An admin site that lets you add, change and delete
+programming languages.
+
+
+To design a Django application with an admin site for managing programming languages, you can follow these steps:
+
+### Step 1: Create a Django Project
+
+```bash
+django-admin startproject languageadmin
+cd languageadmin
+```
+
+### Step 2: Create a Django App
+
+```bash
+python manage.py startapp langadmin
+```
+
+### Step 3: Define Models
+
+Edit `langadmin/models.py` to define the model for the programming languages:
+
+```python
+# langadmin/models.py
+from django.db import models
+
+class ProgrammingLanguage(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+```
+
+### Step 4: Register Models in Admin Panel
+
+Edit `langadmin/admin.py` to register the `ProgrammingLanguage` model in the admin panel:
+
+```python
+# langadmin/admin.py
+from django.contrib import admin
+from .models import ProgrammingLanguage
+
+admin.site.register(ProgrammingLanguage)
+```
+
+### Step 5: Create Database and Apply Migrations
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### Step 6: Run the Development Server
+
+```bash
+python manage.py runserver
+```
+
+Visit `http://127.0.0.1:8000/admin/` in your web browser and log in using the credentials you created during `createsuperuser`. You should see the admin interface.
+
+### Step 7: Add Programming Languages
+
+- Log in to the admin site.
+- Under "Programming languages," you can add, change, and delete programming languages.
+
+### Step 8: Customize Admin Interface (Optional)
+
+You can customize the appearance and behavior of the admin interface by creating an `admin.py` file in your app and registering a custom admin class.
+
+```python
+# langadmin/admin.py
+from django.contrib import admin
+from .models import ProgrammingLanguage
+
+class ProgrammingLanguageAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
+admin.site.register(ProgrammingLanguage, ProgrammingLanguageAdmin)
+```
+
+This is a basic example, and you can extend it by adding more features, validation, and improving the user interface based on your requirements.
