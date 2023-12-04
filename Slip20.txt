@@ -1,0 +1,241 @@
+Q1. Write a Java Program to implement I/O Decorator for converting uppercase letters to
+lower case letters. 
+
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+class ToLowerCaseInputStream extends FilterInputStream {
+    protected ToLowerCaseInputStream(InputStream in) {
+        super(in);
+    }
+
+    @Override
+    public int read() throws IOException {
+        int c = super.read();
+        return (c == -1) ? c : Character.toLowerCase((char) c);
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+        int result = super.read(b, off, len);
+        for (int i = off; i < off + result; i++) {
+            b[i] = (byte) Character.toLowerCase((char) b[i]);
+        }
+        return result;
+    }
+}
+
+public class IODecoratorExample {
+    public static void main(String[] args) {
+        // Example usage
+        try (InputStream inputStream = new ToLowerCaseInputStream(System.in)) {
+            System.out.println("Enter text (uppercase letters will be converted to lowercase):");
+
+            int data;
+            while ((data = inputStream.read()) != -1) {
+                System.out.print((char) data);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+
+
+
+
+
+Q2. Write a python program to implement Decision Tree whether or not to play Tennis.
+
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Sample dataset for playing tennis
+# Format: Outlook, Temperature, Humidity, Wind, Play Tennis
+data = [
+    ['Sunny', 'Hot', 'High', 'Weak', 'No'],
+    ['Sunny', 'Hot', 'High', 'Strong', 'No'],
+    ['Overcast', 'Hot', 'High', 'Weak', 'Yes'],
+    ['Rain', 'Mild', 'High', 'Weak', 'Yes'],
+    ['Rain', 'Cool', 'Normal', 'Weak', 'Yes'],
+    ['Rain', 'Cool', 'Normal', 'Strong', 'No'],
+    ['Overcast', 'Cool', 'Normal', 'Strong', 'Yes'],
+    ['Sunny', 'Mild', 'High', 'Weak', 'No'],
+    ['Sunny', 'Cool', 'Normal', 'Weak', 'Yes'],
+    ['Rain', 'Mild', 'Normal', 'Weak', 'Yes'],
+    ['Sunny', 'Mild', 'Normal', 'Strong', 'Yes'],
+    ['Overcast', 'Mild', 'High', 'Strong', 'Yes'],
+    ['Overcast', 'Hot', 'Normal', 'Weak', 'Yes'],
+    ['Rain', 'Mild', 'High', 'Strong', 'No'],
+]
+
+# Separate features (X) and target variable (y)
+X = [row[:-1] for row in data]
+y = [row[-1] for row in data]
+
+# Convert categorical data to numerical data using one-hot encoding
+X = [[1 if val == 'Sunny' else 2 if val == 'Overcast' else 3 for val in row] for row in X]
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a Decision Tree classifier
+classifier = DecisionTreeClassifier()
+
+# Train the classifier on the training set
+classifier.fit(X_train, y_train)
+
+# Make predictions on the testing set
+y_pred = classifier.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.2f}')
+
+# Test the Decision Tree with new data
+new_data = [['Sunny', 'Cool', 'Normal', 'Weak']]  # Example new data
+new_data_encoded = [[1 if val == 'Sunny' else 2 if val == 'Overcast' else 3 for val in new_data[0]]]
+
+prediction = classifier.predict(new_data_encoded)
+print(f"Prediction for new data: {prediction[0]}")
+
+
+
+Q3. Develop a basic poll application (app).It should consist of two parts:
+a) A public site in which user can pick their favourite programming language and vote.
+b) An admin site that lets you add, change and delete programming languages.
+
+
+To create a basic poll application in Django with a public site for voting and an admin site for managing programming languages, you can follow these steps:
+
+### Step 1: Create a Django Project
+
+```bash
+django-admin startproject pollproject
+cd pollproject
+```
+
+### Step 2: Create a Django App
+
+```bash
+python manage.py startapp pollapp
+```
+
+### Step 3: Define Models
+
+Edit `pollapp/models.py` to define the models for the poll application:
+
+```python
+# pollapp/models.py
+from django.db import models
+
+class ProgrammingLanguage(models.Model):
+    name = models.CharField(max_length=200)
+    votes = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+```
+
+### Step 4: Register Models in Admin Panel
+
+Edit `pollapp/admin.py` to register the `ProgrammingLanguage` model in the admin panel:
+
+```python
+# pollapp/admin.py
+from django.contrib import admin
+from .models import ProgrammingLanguage
+
+admin.site.register(ProgrammingLanguage)
+```
+
+### Step 5: Create Database and Apply Migrations
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### Step 6: Create Views
+
+Edit `pollapp/views.py` to define views for the public site:
+
+```python
+# pollapp/views.py
+from django.shortcuts import render
+from django.http import HttpResponse
+from .models import ProgrammingLanguage
+
+def index(request):
+    languages = ProgrammingLanguage.objects.all()
+    return render(request, 'pollapp/index.html', {'languages': languages})
+
+def vote(request, language_id):
+    language = ProgrammingLanguage.objects.get(pk=language_id)
+    language.votes += 1
+    language.save()
+    return HttpResponse("Thanks for voting!")
+```
+
+### Step 7: Create URLs
+
+Create a `urls.py` file inside the `pollapp` folder:
+
+```python
+# pollapp/urls.py
+from django.urls import path
+from .views import index, vote
+
+urlpatterns = [
+    path('', index, name='index'),
+    path('<int:language_id>/vote/', vote, name='vote'),
+]
+```
+
+Include these URLs in the project's `urls.py`:
+
+```python
+# pollproject/urls.py
+from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('poll/', include('pollapp.urls')),
+]
+```
+
+### Step 8: Create Templates
+
+Create a `templates` folder inside the `pollapp` folder. Inside this folder, create `index.html`:
+
+```html
+<!-- pollapp/templates/pollapp/index.html -->
+<h1>Vote for Your Favorite Programming Language</h1>
+<ul>
+  {% for language in languages %}
+    <li>{{ language.name }} - {{ language.votes }} votes
+      <form action="{% url 'vote' language.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Vote</button>
+      </form>
+    </li>
+  {% endfor %}
+</ul>
+```
+
+### Step 9: Run the Development Server
+
+```bash
+python manage.py runserver
+```
+
+Visit `http://127.0.0.1:8000/poll/` in your web browser for the public site. You can also access the admin site at `http://127.0.0.1:8000/admin/` and use the credentials you created during `createsuperuser` to manage programming languages.
+
+This is a basic example, and you can extend it by adding more features and improving the user interface based on your requirements.
