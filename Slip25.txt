@@ -1,0 +1,146 @@
+Q1. Write a Java Program to implement Singleton pattern for multithreading
+
+Implementing the Singleton pattern for multithreading involves ensuring that only one instance of the class is created and handling potential race conditions when multiple threads try to create the instance simultaneously. One common approach is to use double-checked locking. Below is an example Java program demonstrating the Singleton pattern with double-checked locking:
+
+```java
+public class Singleton {
+    // The volatile keyword ensures that the instance variable is visible to all threads
+    private static volatile Singleton instance;
+
+    // Private constructor to prevent instantiation from outside the class
+    private Singleton() {
+        // Initialization code, if needed
+    }
+
+    // Double-checked locking to ensure only one instance is created
+    public static Singleton getInstance() {
+        if (instance == null) {
+            synchronized (Singleton.class) {
+                if (instance == null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+
+    // Other methods, if needed
+}
+
+class SingletonExample {
+    public static void main(String[] args) {
+        // Creating multiple threads to test Singleton
+        Runnable runnable = () -> {
+            Singleton singleton = Singleton.getInstance();
+            System.out.println(Thread.currentThread().getName() + ": " + singleton.hashCode());
+        };
+
+        // Creating and starting multiple threads
+        Thread thread1 = new Thread(runnable);
+        Thread thread2 = new Thread(runnable);
+        thread1.start();
+        thread2.start();
+    }
+}
+```
+
+In this example:
+
+- The `Singleton` class has a private static instance variable, a private constructor, and a public method `getInstance()` that implements double-checked locking to create the instance.
+- The `volatile` keyword ensures that changes to the instance variable are immediately visible to other threads.
+- The `main` method demonstrates creating and starting two threads, both accessing the `getInstance()` method to obtain the singleton instance.
+
+It's important to note that starting from Java 5, the `enum` type is recommended for implementing a singleton pattern as it provides implicit thread-safety and serialization/deserialization safety. Here's an example using an `enum`:
+
+```java
+public enum SingletonEnum {
+    INSTANCE;
+
+    // Other methods, if needed
+}
+
+class SingletonEnumExample {
+    public static void main(String[] args) {
+        SingletonEnum singleton1 = SingletonEnum.INSTANCE;
+        SingletonEnum singleton2 = SingletonEnum.INSTANCE;
+
+        System.out.println("Hashcode of singleton1: " + singleton1.hashCode());
+        System.out.println("Hashcode of singleton2: " + singleton2.hashCode());
+    }
+}
+```
+
+In this example, the `INSTANCE` enum is guaranteed to be a singleton, and its instance is created only once. Accessing `SingletonEnum.INSTANCE` from different threads is inherently thread-safe.
+
+
+
+
+Q2. Write a python program to Implement Simple Linear Regression for predicting house
+price.
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Generate random data for demonstration
+np.random.seed(42)
+X = np.random.rand(100, 1) * 10  # Independent variable (house size)
+y = 3 * X + np.random.randn(100, 1) * 2  # Dependent variable (house price)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a Linear Regression model
+model = LinearRegression()
+
+# Train the model on the training set
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+# Print model parameters
+print("Coefficients:", model.coef_)
+print("Intercept:", model.intercept_)
+print("Mean Squared Error:", mse)
+print("R-squared:", r2)
+
+# Plot the data and regression line
+plt.scatter(X_test, y_test, color='black', label='Actual Data')
+plt.plot(X_test, y_pred, color='blue', linewidth=3, label='Regression Line')
+plt.xlabel('House Size')
+plt.ylabel('House Price')
+plt.title('Simple Linear Regression for House Price Prediction')
+plt.legend()
+plt.show()
+
+
+
+
+
+
+
+
+Q3. Create a Simple Web Server using node js.
+
+// server.js
+
+const http = require('http');
+
+// Create a simple web server
+const server = http.createServer((req, res) => {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('Hello, World!\n');
+});
+
+// Listen on port 3000
+const port = 3000;
+server.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}/`);
+});
