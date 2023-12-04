@@ -1,0 +1,275 @@
+Q1. Write a JAVA Program to implement built-in support (java.util.Observable) Weather
+station with members temperature, humidity, pressure and methods
+mesurmentsChanged(), setMesurment(), getTemperature(), getHumidity(),
+getPressure()
+
+import java.util.Observable;
+import java.util.Observer;
+
+// WeatherData class extends Observable
+class WeatherData extends Observable {
+    private float temperature;
+    private float humidity;
+    private float pressure;
+
+    // Notify observers when measurements change
+    public void measurementsChanged() {
+        setChanged();
+        notifyObservers();
+    }
+
+    // Setter method for measurements
+    public void setMeasurements(float temperature, float humidity, float pressure) {
+        this.temperature = temperature;
+        this.humidity = humidity;
+        this.pressure = pressure;
+        measurementsChanged();
+    }
+
+    // Getter methods for temperature, humidity, and pressure
+    public float getTemperature() {
+        return temperature;
+    }
+
+    public float getHumidity() {
+        return humidity;
+    }
+
+    public float getPressure() {
+        return pressure;
+    }
+}
+
+// CurrentConditionsDisplay implements Observer
+class CurrentConditionsDisplay implements Observer {
+    private float temperature;
+    private float humidity;
+
+    // Update method to be called when notified of changes
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof WeatherData) {
+            WeatherData weatherData = (WeatherData) o;
+            this.temperature = weatherData.getTemperature();
+            this.humidity = weatherData.getHumidity();
+            display();
+        }
+    }
+
+    // Display the current conditions
+    public void display() {
+        System.out.println("Current Conditions: " + temperature + "F degrees and " + humidity + "% humidity");
+    }
+}
+
+// Main class to demonstrate the Weather Station
+public class WeatherStation {
+    public static void main(String[] args) {
+        // Create a WeatherData object (Observable)
+        WeatherData weatherData = new WeatherData();
+
+        // Create observers (subscribers)
+        CurrentConditionsDisplay currentDisplay = new CurrentConditionsDisplay();
+
+        // Register observers to the Observable
+        weatherData.addObserver(currentDisplay);
+
+        // Simulate weather measurements changes
+        weatherData.setMeasurements(80, 65, 30.4f);
+        weatherData.setMeasurements(82, 70, 29.2f);
+        weatherData.setMeasurements(78, 90, 29.2f);
+    }
+}
+
+
+
+
+
+Q2. Write a python program to implement Naive Bayes.
+# Import necessary libraries
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, classification_report
+
+# Sample data (replace with your own dataset)
+data = [
+    ('I love this movie', 'positive'),
+    ('This is a great movie', 'positive'),
+    ('I hate this movie', 'negative'),
+    ('This is a terrible movie', 'negative'),
+    ('I like this movie', 'positive'),
+    ('This movie is awful', 'negative'),
+    ('I enjoy watching this film', 'positive'),
+    ('I dislike this film', 'negative'),
+]
+
+# Separate data into features (X) and labels (y)
+X, y = zip(*data)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a bag-of-words model using CountVectorizer
+vectorizer = CountVectorizer()
+X_train_vectorized = vectorizer.fit_transform(X_train)
+X_test_vectorized = vectorizer.transform(X_test)
+
+# Train a Naive Bayes classifier
+naive_bayes_classifier = MultinomialNB()
+naive_bayes_classifier.fit(X_train_vectorized, y_train)
+
+# Make predictions on the test set
+y_pred = naive_bayes_classifier.predict(X_test_vectorized)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.2f}')
+
+# Display classification report
+print('\nClassification Report:')
+print(classification_report(y_test, y_pred))
+
+
+
+
+
+
+Q3. Create your own blog using Django
+
+Creating a blog using Django involves several steps, including setting up a Django project, defining models, creating views, and implementing templates. Below is a basic example to help you get started. Please note that this is a simplified example, and you may want to enhance it based on your specific requirements.
+
+### Step 1: Install Django
+
+If you haven't installed Django yet, you can do so using the following command:
+
+```bash
+pip install django
+```
+
+### Step 2: Create a Django Project and App
+
+Create a new Django project and a blog app within the project:
+
+```bash
+django-admin startproject myblog
+cd myblog
+python manage.py startapp blog
+```
+
+### Step 3: Define Models
+
+In the `blog/models.py` file, define the models for your blog posts:
+
+```python
+# blog/models.py
+from django.db import models
+from django.utils import timezone
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    pub_date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.title
+```
+
+### Step 4: Configure Database
+
+Update the `myblog/settings.py` file to include the `blog` app and configure the database:
+
+```python
+# myblog/settings.py
+INSTALLED_APPS = [
+    # ...
+    'blog',
+]
+```
+
+### Step 5: Migrate the Database
+
+Run the following commands to apply the initial database migrations:
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### Step 6: Create Views
+
+In the `blog/views.py` file, create views for listing all posts and viewing a single post:
+
+```python
+# blog/views.py
+from django.shortcuts import render, get_object_or_404
+from .models import Post
+
+def post_list(request):
+    posts = Post.objects.all().order_by('-pub_date')
+    return render(request, 'blog/post_list.html', {'posts': posts})
+
+def post_detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    return render(request, 'blog/post_detail.html', {'post': post})
+```
+
+### Step 7: Create Templates
+
+Create HTML templates for listing posts (`blog/templates/blog/post_list.html`) and viewing a single post (`blog/templates/blog/post_detail.html`).
+
+```html
+<!-- blog/templates/blog/post_list.html -->
+{% for post in posts %}
+  <h2><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h2>
+  <p>{{ post.pub_date }}</p>
+  <p>{{ post.content }}</p>
+{% endfor %}
+```
+
+```html
+<!-- blog/templates/blog/post_detail.html -->
+<h2>{{ post.title }}</h2>
+<p>{{ post.pub_date }}</p>
+<p>{{ post.content }}</p>
+```
+
+### Step 8: Create URLs
+
+In the `blog/urls.py` file, define the URLs for your views:
+
+```python
+# blog/urls.py
+from django.urls import path
+from .views import post_list, post_detail
+
+urlpatterns = [
+    path('', post_list, name='post_list'),
+    path('post/<int:pk>/', post_detail, name='post_detail'),
+]
+```
+
+### Step 9: Include URLs in the Project
+
+Include the blog URLs in the project's `urls.py` file:
+
+```python
+# myblog/urls.py
+from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('blog/', include('blog.urls')),
+]
+```
+
+### Step 10: Run the Development Server
+
+Start the development server and visit http://localhost:8000/blog/ to see your blog:
+
+```bash
+python manage.py runserver
+```
+
+This is a basic setup, and you can expand on it by adding features like user authentication, comments, and more styling. Additionally, consider deploying your Django project to a production server when you're ready to make your blog publicly accessible.
